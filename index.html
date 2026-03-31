@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Housing Insight Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --secondary: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+      body {
+    /* A soft blue-to-white gradient */
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    /* OR a subtle grid pattern */
+    background-image: radial-gradient(#cbd5e1 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+}
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-weight: 800; font-size: 1.4rem; color: var(--primary); letter-spacing: -1px; }
+
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links li a:hover, .nav-links li a.active { color: var(--primary); }
+
+        /* Page Layout */
+        .page { display: none; padding: 60px 5%; max-width: 1200px; margin: 0 auto; animation: slideUp 0.5s ease-out; }
+        .page.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home / Hero */
+        #home.page { 
+            text-align: center; 
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
+                        url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            border-radius: 0 0 40px 40px;
+        }
+
+        #home.page.active { display: flex; }
+
+        .hero h1 { font-size: 4rem; font-weight: 800; margin-bottom: 20px; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px; opacity: 0.9; }
+
+        .btn-cta {
+            background: var(--primary);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3); }
+
+        /* Dashboard Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+
+        .stat-box { text-align: center; padding: 20px; background: #eff6ff; border-radius: 15px; }
+        .stat-box h3 { color: var(--secondary); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-box p { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+
+        /* Story Cards */
+        .story-item { background: white; padding: 40px; border-radius: 20px; margin-bottom: 30px; border-left: 8px solid var(--accent); }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">HOUSELY</div>
+        <ul class="nav-links">
+            <li><a onclick="showPage('home')" id="link-home" class="active">Home</a></li>
+            <li><a onclick="showPage('dashboard')" id="link-dashboard">Data Trends</a></li>
+            <li><a onclick="showPage('story')" id="link-story">The Story</a></li>
+            <li><a onclick="showPage('about')" id="link-about">About</a></li>
+        </ul>
+    </nav>
+
+    <section id="home" class="page active">
+        <div class="hero">
+            <h1>Data-Driven <br><span style="color:var(--accent)">Home Buying.</span></h1>
+            <p>We've analyzed over 21,000 property records to help you understand market cycles and value triggers.</p>
+            <div>
+                <a onclick="showPage('dashboard')" class="btn-cta">Analyze Trends</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="page">
+        <h2 style="margin-bottom:10px;">Market Pulse</h2>
+        <p style="color:var(--secondary); margin-bottom: 30px;">Historical pricing analysis based on house age and grade.</p>
+
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="stat-box"><h3>Avg Sale Price</h3><p>$511,619</p></div>
+            <div class="stat-box"><h3>Records Analyzed</h3><p>21,609</p></div>
+            <div class="stat-box"><h3>Market Median</h3><p>$450,000</p></div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Price vs. House Age (Years)</h3>
+                <canvas id="ageChart" style="margin-top: 20px;"></canvas>
+            </div>
+            <div class="card">
+                <h3>Price vs. Quality Grade</h3>
+                <canvas id="gradeChart" style="margin-top: 20px;"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section id="story" class="page">
+        <div class="story-item">
+            <h2>The "Golden Era" Premium</h2>
+            <p>Our data shows a surprising trend: Houses between 80 and 110 years old actually command a higher premium (Avg: ~$550k) than mid-century homes built 40-70 years ago (~$435k). This suggests a strong market for historic architecture and high-quality vintage builds.</p>
+        </div>
+        <div class="story-item" style="border-left-color: var(--primary);">
+            <h2>Condition vs. Valuation</h2>
+            <p>The state of the home is a major multiplier. Homes in <strong>Excellent</strong> condition sell for an average of <strong>$568,074</strong>, whereas homes in <strong>Okay</strong> condition drop significantly to <strong>$318,590</strong>. This indicates that renovation provides one of the highest returns on investment in this market.</p>
+        </div>
+    </section>
+
+    <section id="about" class="page">
+        <h2>About the Dataset</h2>
+        <p>This visualization uses the <strong>Transformed_Housing_Data2.csv</strong>, which includes detailed property attributes such as square footage, latitude/longitude, condition grades, and renovation history.</p>
+        <div style="background: #eee; padding: 20px; border-radius: 10px; margin-top: 20px; font-family: monospace;">
+            File: Transformed_Housing_Data2.csv<br>
+            Total Rows: 21,609<br>
+            Features: 31
+        </div>
+    </section>
+
+    <script>
+        // NAVIGATION LOGIC
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+            document.getElementById('link-' + pageId).classList.add('active');
+
+            if (pageId === 'dashboard') {
+                setTimeout(renderCharts, 100);
+            }
+        }
+
+        // CHARTS DATA (EXTRACTED FROM YOUR CSV)
+        const ageLabels = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110];
+        const agePrices = [578115, 571471, 542528, 497564, 469959, 444664, 464762, 435969, 547922, 566067, 559975, 583449];
+        
+        const gradeLabels = ['Grade 3', 'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'];
+        const gradePrices = [205666, 214381, 248523, 301882, 402239, 537584, 736936, 960408];
+
+        function renderCharts() {
+            // Age Line Chart
+            new Chart(document.getElementById('ageChart'), {
+                type: 'line',
+                data: {
+                    labels: ageLabels.map(l => l + 's'),
+                    datasets: [{
+                        label: 'Avg Sale Price',
+                        data: agePrices,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+
+            // Grade Bar Chart
+            new Chart(document.getElementById('gradeChart'), {
+                type: 'bar',
+                data: {
+                    labels: gradeLabels,
+                    datasets: [{
+                        label: 'Avg Sale Price',
+                        data: gradePrices,
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 8
+                    }]
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+        }
+    </script>
+</body>
+</html>
